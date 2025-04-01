@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -31,10 +30,7 @@ func main() {
   if dbURL == "" {
     log.Fatal("DB_URL environment variable is not set")
   }
-  if !strings.Contains(dbURL, "sslmode=") {
-    dbURL += "?sslmode=disable"
-  }
-
+  
   db, err := sql.Open("postgres", dbURL) // db type: *sql.DB
   if err != nil {
     log.Fatal(err)
@@ -58,6 +54,7 @@ func main() {
 
   v1Router := chi.NewRouter()
   v1Router.Post("/users", apiCfg.handlerUsersCreate)
+  v1Router.Get("/users", apiCfg.handlerUsersGet)
   v1Router.Get("/healthz", handlerReadiness)
   v1Router.Get("/err", handlerErr)
 
